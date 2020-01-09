@@ -5,7 +5,7 @@
 Summary: A program-script interaction and testing utility
 Name: expect
 Version: %{majorver}.1.15
-Release: 2%{?dist}
+Release: 4%{?dist}
 License: Public Domain
 Group: Development/Languages
 # URL: probably more useful is http://sourceforge.net/projects/expect/
@@ -21,11 +21,19 @@ Patch1: expect-5.43.0-pkgpath.patch
 # Patch2: fixes bz456738, expectk is unsupported by upstream actually,
 #	but the patch is under discussion (patch by Sergei Golovan)
 Patch2: expect-5.44.1.15-tk-init.patch
+# Patch3: fixes bz742911
+Patch3: expect-5.44.1.15-match-gt-numchars-segfault.patch
+# Patch4: bz674866, proposed upstream, not accepted yet
+# https://sourceforge.net/tracker/?func=detail&aid=3404934&group_id=13179&atid=113179
+Patch4: expect-5.45-man-page.patch
 # examples patches
 # Patch100: changes random function
 Patch100: expect-5.32.2-random.patch
 # Patch101: bz547686, no response from upstream
 Patch101: expect-5.44.1.15-unbuffer-exit-code.patch
+# Patch102: bz735962, proposed to upstream, not accepted yet
+# https://sourceforge.net/tracker/?func=detail&aid=3404914&group_id=13179&atid=113179
+Patch102: expect-5.45-passmass-su-full-path.patch
 
 %description
 Expect is a tcl application for automating and testing
@@ -66,9 +74,12 @@ This package contains expectk and some scripts that use it.
 %patch0 -p1 -b .log_file
 %patch1 -p1 -b .pkgpath
 %patch2 -p1 -b .tk-init
+%patch3 -p1 -b .match-gt-numchars-segfault
+%patch4 -p1 -b .man-page
 # examples fixes
 %patch100 -p1 -b .random
 %patch101 -p1 -b .unbuffer-exit-code
+%patch102 -p1 -b .passmass-su-full-path
 # -pkgpath.patch touch configure.in
 aclocal
 autoconf
@@ -126,6 +137,7 @@ rm -rf "$RPM_BUILD_ROOT"
 %dir %{tcl_sitearch}/expect%{version}
 %{tcl_sitearch}/expect%{version}/pkgIndex.tcl
 %{_libdir}/libexpect%{version}.so
+%{_libdir}/libexpect.so
 %{_mandir}/man1/autoexpect.1.gz
 %{_mandir}/man1/dislocate.1.gz
 %{_mandir}/man1/expect.1.gz
@@ -138,7 +150,6 @@ rm -rf "$RPM_BUILD_ROOT"
 
 %files devel
 %defattr(-,root,root,-)
-%{_libdir}/libexpect.so
 %{_mandir}/man3/libexpect.3*
 %{_includedir}/*
 
@@ -154,6 +165,18 @@ rm -rf "$RPM_BUILD_ROOT"
 %{_mandir}/man1/tknewsbiff.1*
 
 %changelog
+* Tue Feb 07 2012 Vitezslav Crhonek <vcrhonek@redhat.com> - 5.44.1.15-4
+- Move libexpect link out of -devel subpackage
+  Resolves: #782859
+
+* Thu Jan 26 2012 Vitezslav Crhonek <vcrhonek@redhat.com> - 5.44.1.15-3
+- Use full path to su in passmass
+  Resolves: #735962
+- Fix segfault in characters matching
+  Resolves: #742911
+- Fix minor man page formatting issue
+  Resolves: #674866
+
 * Tue Jun  8 2010 Vitezslav Crhonek <vcrhonek@redhat.com> - 5.44.1.15-2
 - Fix wrong symlink
 
