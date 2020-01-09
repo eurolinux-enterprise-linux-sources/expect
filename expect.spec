@@ -5,7 +5,7 @@
 Summary: A program-script interaction and testing utility
 Name: expect
 Version: %{majorver}.1.15
-Release: 4%{?dist}
+Release: 5%{?dist}
 License: Public Domain
 Group: Development/Languages
 # URL: probably more useful is http://sourceforge.net/projects/expect/
@@ -26,6 +26,8 @@ Patch3: expect-5.44.1.15-match-gt-numchars-segfault.patch
 # Patch4: bz674866, proposed upstream, not accepted yet
 # https://sourceforge.net/tracker/?func=detail&aid=3404934&group_id=13179&atid=113179
 Patch4: expect-5.45-man-page.patch
+# Patch5: fixes memory leak when using -re, http://sourceforge.net/p/expect/patches/13/
+Patch5: expect-5.45-re-memleak.patch
 # examples patches
 # Patch100: changes random function
 Patch100: expect-5.32.2-random.patch
@@ -76,6 +78,7 @@ This package contains expectk and some scripts that use it.
 %patch2 -p1 -b .tk-init
 %patch3 -p1 -b .match-gt-numchars-segfault
 %patch4 -p1 -b .man-page
+%patch5 -p1 -b .re-memleak
 # examples fixes
 %patch100 -p1 -b .random
 %patch101 -p1 -b .unbuffer-exit-code
@@ -165,6 +168,11 @@ rm -rf "$RPM_BUILD_ROOT"
 %{_mandir}/man1/tknewsbiff.1*
 
 %changelog
+* Thu Oct 31 2013 Vitezslav Crhonek <vcrhonek@redhat.com> - 5.44.1.15-5
+- Fix bogus dates in the %%changelog
+- Fix memory leak when using -re option
+  Resolves: #1025202
+
 * Tue Feb 07 2012 Vitezslav Crhonek <vcrhonek@redhat.com> - 5.44.1.15-4
 - Move libexpect link out of -devel subpackage
   Resolves: #782859
@@ -395,10 +403,10 @@ rm -rf "$RPM_BUILD_ROOT"
 - quick hack to have a correct setpgrp() call in expect
 - fix config.guess and config.sub to newer versions
 
-* Mon Aug 28 2001 Adrian Havill <havill@redhat.com>
+* Tue Aug 28 2001 Adrian Havill <havill@redhat.com>
 - expect's fixline1 busted for expectk scripts (tkpasswd/tknewsbiff/tkterm)
 
-* Mon Aug  8 2001 Adrian Havill <havill@redhat.com>
+* Wed Aug  8 2001 Adrian Havill <havill@redhat.com>
 - re-enable glibc string and math inlines; recent gcc is a-ok.
 - optimize at -O2 instead of -O
 - rename "soname" patches related to makefile/autoconf changes
