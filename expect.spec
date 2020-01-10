@@ -5,7 +5,7 @@
 Summary: A program-script interaction and testing utility
 Name: expect
 Version: %{majorver}
-Release: 12%{?dist}
+Release: 14%{?dist}
 License: Public Domain
 Group: Development/Languages
 # URL: probably more useful is http://sourceforge.net/projects/expect/
@@ -25,6 +25,9 @@ Patch3: expect-5.45-match-gt-numchars-segfault.patch
 Patch4: expect-5.45-re-memleak.patch
 # Patch5: use vsnprintf instead of vsprintf to avoid buffer overflow
 Patch5: expect-5.45-exp-log-buf-overflow.patch
+# Patch6: fixes segfaults if Tcl is built with stubs and Expect is used directly
+#   from C program rhbz#1091060
+Patch6: expect-5.45-segfault-with-stubs.patch
 # examples patches
 # Patch100: changes random function
 Patch100: expect-5.32.2-random.patch
@@ -82,6 +85,7 @@ of expectk.
 %patch3 -p1 -b .match-gt-numchars-segfault
 %patch4 -p1 -b .re-memleak
 %patch5 -p1 -b .exp-log-buf-overflow
+%patch6 -p1 -b .segfault-with-stubs
 # examples fixes
 %patch100 -p1 -b .random
 %patch101 -p1 -b .mkpasswd-dash
@@ -170,6 +174,20 @@ rm -rf "$RPM_BUILD_ROOT"
 %{_mandir}/man1/tknewsbiff.1*
 
 %changelog
+* Tue Jun 23 2015 Scientific Linux Auto Patch Process <SCIENTIFIC-LINUX-DEVEL@LISTSERV.FNAL.GOV>
+- Eliminated rpmbuild "bogus date" error due to inconsistent weekday,
+  by assuming the date is correct and changing the weekday.
+
+* Wed May 20 2015 Vitezslav Crhonek <vcrhonek@redhat.com> - 5.45-14
+- Use different and probably better approach of fixing segfaults if Tcl is
+  built with stubs and Expect is used directly from C program
+  Resolves: #1091060
+
+* Mon May 18 2015 Vitezslav Crhonek <vcrhonek@redhat.com> - 5.45-13
+- Fix segfaults if Tcl is built with stubs and Expect is used directly from C program
+  (patch taken from Debian project, written by Sergei Golovan)
+  Resolves: #1091060
+
 * Fri Jan 24 2014 Daniel Mach <dmach@redhat.com> - 5.45-12
 - Mass rebuild 2014-01-24
 
@@ -429,10 +447,10 @@ rm -rf "$RPM_BUILD_ROOT"
 - quick hack to have a correct setpgrp() call in expect
 - fix config.guess and config.sub to newer versions
 
-* Mon Aug 28 2001 Adrian Havill <havill@redhat.com>
+* Tue Aug 28 2001 Adrian Havill <havill@redhat.com>
 - expect's fixline1 busted for expectk scripts (tkpasswd/tknewsbiff/tkterm)
 
-* Mon Aug  8 2001 Adrian Havill <havill@redhat.com>
+* Wed Aug  8 2001 Adrian Havill <havill@redhat.com>
 - re-enable glibc string and math inlines; recent gcc is a-ok.
 - optimize at -O2 instead of -O
 - rename "soname" patches related to makefile/autoconf changes
