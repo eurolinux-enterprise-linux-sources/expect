@@ -5,7 +5,7 @@
 Summary: A program-script interaction and testing utility
 Name: expect
 Version: %{majorver}
-Release: 9%{?dist}
+Release: 12%{?dist}
 License: Public Domain
 Group: Development/Languages
 # URL: probably more useful is http://sourceforge.net/projects/expect/
@@ -23,6 +23,8 @@ Patch2: expect-5.45-man-page.patch
 Patch3: expect-5.45-match-gt-numchars-segfault.patch
 # Patch4: fixes memory leak when using -re, http://sourceforge.net/p/expect/patches/13/
 Patch4: expect-5.45-re-memleak.patch
+# Patch5: use vsnprintf instead of vsprintf to avoid buffer overflow
+Patch5: expect-5.45-exp-log-buf-overflow.patch
 # examples patches
 # Patch100: changes random function
 Patch100: expect-5.32.2-random.patch
@@ -79,6 +81,7 @@ of expectk.
 %patch2 -p1 -b .man-page
 %patch3 -p1 -b .match-gt-numchars-segfault
 %patch4 -p1 -b .re-memleak
+%patch5 -p1 -b .exp-log-buf-overflow
 # examples fixes
 %patch100 -p1 -b .random
 %patch101 -p1 -b .mkpasswd-dash
@@ -167,6 +170,17 @@ rm -rf "$RPM_BUILD_ROOT"
 %{_mandir}/man1/tknewsbiff.1*
 
 %changelog
+* Fri Jan 24 2014 Daniel Mach <dmach@redhat.com> - 5.45-12
+- Mass rebuild 2014-01-24
+
+* Fri Dec 27 2013 Daniel Mach <dmach@redhat.com> - 5.45-11
+- Mass rebuild 2013-12-27
+
+* Thu Dec 12 2013 Vitezslav Crhonek <vcrhonek@redhat.com> - 5.49-10
+- Use vsnprintf instead of vsprintf to avoid buffer overflow
+  (it happens e.g. when running systemtap testsuite)
+  Resolves: #1038931
+
 * Thu Oct 03 2013 Vitezslav Crhonek <vcrhonek@redhat.com> - 5.45-9
 - Fix memory leak when using -re option
   Resolves: #1014624
